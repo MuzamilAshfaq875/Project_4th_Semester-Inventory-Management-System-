@@ -1,0 +1,86 @@
+-- Create Database
+CREATE DATABASE inventory_management;
+USE inventory_management;
+
+-- Users Table (Admin/Staff login)
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('Admin', 'Staff') DEFAULT 'Staff',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Categories Table
+CREATE TABLE categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- Suppliers Table
+CREATE TABLE suppliers (
+    supplier_id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_name VARCHAR(100) NOT NULL,
+    contact_name VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    address TEXT
+);
+
+-- Products Table
+CREATE TABLE products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    category_id INT,
+    supplier_id INT,
+    quantity_in_stock INT DEFAULT 0,
+    purchase_price DECIMAL(10,2) NOT NULL,
+    selling_price DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+);
+
+-- Customers Table
+CREATE TABLE customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    address TEXT
+);
+
+-- Purchases Table (Stock In)
+CREATE TABLE purchases (
+    purchase_id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    total_cost DECIMAL(10,2) NOT NULL,
+    purchase_date DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- Sales Table (Stock Out)
+CREATE TABLE sales (
+    sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    sale_date DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- Stock Movement (Optional: Tracks IN/OUT)
+CREATE TABLE stock_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    change_type ENUM('IN', 'OUT'),
+    quantity INT NOT NULL,
+    log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);

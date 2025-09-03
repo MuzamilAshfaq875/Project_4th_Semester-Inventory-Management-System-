@@ -1,0 +1,43 @@
+-- Insert Categories
+INSERT INTO categories (category_name) VALUES 
+('Electronics'), ('Clothing'), ('Groceries');
+
+-- Insert Supplier
+INSERT INTO suppliers (supplier_name, phone, email) VALUES
+('ABC Supplier', '03001234567', 'abc@supplier.com');
+
+-- Insert Products
+INSERT INTO products (product_name, category_id, supplier_id, quantity_in_stock, purchase_price, selling_price) VALUES
+('Laptop', 1, 1, 10, 60000, 75000),
+('T-Shirt', 2, 1, 50, 500, 800);
+
+-- Insert Customers
+INSERT INTO customers (customer_name, phone, email) VALUES
+('Ali Khan', '03011223344', 'ali@gmail.com'),
+('Sara Ahmed', '03014567890', 'sara@gmail.com');
+
+-- Record a Purchase (Stock In)
+INSERT INTO purchases (supplier_id, product_id, quantity, total_cost) 
+VALUES (1, 1, 5, 300000);
+
+UPDATE products SET quantity_in_stock = quantity_in_stock + 5 WHERE product_id = 1;
+
+INSERT INTO stock_log (product_id, change_type, quantity) VALUES (1, 'IN', 5);
+
+-- Record a Sale (Stock Out)
+INSERT INTO sales (customer_id, product_id, quantity, total_price)
+VALUES (1, 1, 2, 150000);
+
+UPDATE products SET quantity_in_stock = quantity_in_stock - 2 WHERE product_id = 1;
+
+INSERT INTO stock_log (product_id, change_type, quantity) VALUES (1, 'OUT', 2);
+
+-- View Stock Report
+SELECT product_name, quantity_in_stock, selling_price 
+FROM products;
+
+-- View Sales Report
+SELECT s.sale_id, c.customer_name, p.product_name, s.quantity, s.total_price, s.sale_date
+FROM sales s
+JOIN customers c ON s.customer_id = c.customer_id
+JOIN products p ON s.product_id = p.product_id;
